@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Annotated
 
 from rich.console import Console
-from typer import Exit, Option, Typer
+from typer import Option, Typer
 
 from pjecz_gob_mx_cli_typer.config.settings import get_settings
 
