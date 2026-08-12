@@ -14,6 +14,7 @@ from unidecode import unidecode
 
 from pjecz_gob_mx_cli_typer.config.settings import get_settings
 
+MARKDOWN_LAYOUT = "/layouts/MarkdownLayout.astro"
 METADATA_KEYS = {"Title", "Summary", "Date", "Modify", "Key"}
 
 bitacora = logging.getLogger(__name__)
@@ -70,7 +71,7 @@ def generar_indice(directorio: Path, generated_dir: Path, console: Console):
 
         # Calculate depth relative to generated_dir for layout path
         depth = len(subdir.relative_to(generated_dir).parts)
-        layout_path = "/".join([".."] * depth) + "/layouts/BaseLayout.astro"
+        layout_path = "/".join([".."] * depth) + MARKDOWN_LAYOUT
 
         # Full path from site root for links
         root_path = "/" + str(subdir.relative_to(generated_dir)) + "/"
@@ -169,7 +170,7 @@ def generar(
 
                 # 1. Que se base en el BaseLayout
                 depth = len(ruta_sanitizada.parts) - 1
-                layout_path = "/".join([".."] * depth) + "/layouts/BaseLayout.astro"
+                layout_path = "/".join([".."] * depth) + MARKDOWN_LAYOUT
                 metadatos.append(f"layout: ../{layout_path}")
 
                 # 2. Título: usar Title del archivo si existe, si no usar el nombre del archivo

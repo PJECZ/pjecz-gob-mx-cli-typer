@@ -29,7 +29,7 @@ Para copiar los archivos markdown desde Google Drive al local
 cli rclone copiar --guardar
 ```
 
-Para generar los archivos mardown para Astro a partir de los archivos 
+Para generar los archivos mardown para Astro a partir de los archivos
 
 ```bash
 cli astro generar --guadar
@@ -107,8 +107,8 @@ then
     echo "   DB_PASS: ${DB_PASS}"
     echo "   GENERATED_DIR: ${GENERATED_DIR}"
     echo "   RCLONE_REMOTES_CSV: ${RCLONE_REMOTES_CSV}"
-    echo "   SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"
     echo "   SOURCES_DIR: ${SOURCES_DIR}"
+    echo "   SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"
     echo "   TZ: ${TZ}"
     echo
     export PGHOST=$DB_HOST
