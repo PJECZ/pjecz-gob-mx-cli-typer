@@ -25,17 +25,17 @@ app = Typer(name="rclone", help="RCLONE commands")
 
 
 @app.command()
-def copiar(
+def sincronizar(
     esta_rama: str = "",
     este_remoto: str = "",
     guardar: Annotated[bool, Option("--guardar", "-g", help="Si no se usa, se simula la copia")] = False,
 ):
-    """Copiar archivos desde Google Workspace al directorio SOURCES_DIR leyendo RCLONE_REMOTES_CSV"""
+    """Sincronizar archivos desde Google Workspace al directorio SOURCES_DIR leyendo RCLONE_REMOTES_CSV"""
     console = Console()
     if guardar:
-        msg = "Copiando archivos desde Google Workspace al directorio SOURCES_DIR..."
+        msg = "Sincronizando archivos desde Google Workspace al directorio SOURCES_DIR..."
     else:
-        msg = "Simulando la copia de archivos desde Google Workspace al directorio SOURCES_DIR..."
+        msg = "Simulando la sincronización de archivos desde Google Workspace al directorio SOURCES_DIR..."
     bitacora.info(msg)
     console.print(msg)
 
@@ -45,7 +45,7 @@ def copiar(
     rclone_remotes_csv = Path(settings.RCLONE_REMOTES_CSV)
 
     # Leer el archivo rclone-remotes.csv
-    ramas_copiadas_contador = 0
+    ramas_sincronizadas_contador = 0
     with open(rclone_remotes_csv, newline="", encoding="utf-8") as puntero:
         lector = csv.DictReader(puntero)
         for fila in lector:
@@ -67,18 +67,18 @@ def copiar(
             # Crear el directorio de destino si no existe
             os.makedirs(destination_path, exist_ok=True)
 
-            # Ejecutar el comando rclone copy
+            # Ejecutar el comando rclone sync
             if guardar:
-                command = ["rclone", "copy", "--include", "*.md", rclone_source, destination_path]
+                command = ["rclone", "sync", "--include", "*.md", rclone_source, destination_path]
             else:
-                command = ["rclone", "copy", "--include", "*.md", rclone_source, destination_path, "--dry-run"]
+                command = ["rclone", "sync", "--include", "*.md", rclone_source, destination_path, "--dry-run"]
             msg = f"Ejecutando: {' '.join(command)}"
             bitacora.info(msg)
             console.print(msg)
             try:
                 result = subprocess.run(command, capture_output=True, check=True, text=True)
             except subprocess.CalledProcessError as error:
-                msg = f"Error al ejecutar rclone copy para la rama {rama}"
+                msg = f"Error al ejecutar rclone sync para la rama {rama}"
                 bitacora.error(msg)
                 console.print(f"[yellow]{msg}[/yellow]")
                 console.print(error.stderr)
@@ -86,14 +86,14 @@ def copiar(
 
             # Si el resultado no es exitoso, mostrar el error
             if result.returncode != 0:
-                msg = f"Error al ejecutar rclone copy para la rama {rama}"
+                msg = f"Error al ejecutar rclone sync para la rama {rama}"
                 bitacora.error(msg)
                 console.print(f"[yellow]{msg}[/yellow]")
                 console.print(error.stderr)
                 continue  # Continuar con la siguiente fila en caso de error
 
             # Incrementar el contador de ramas copiadas
-            ramas_copiadas_contador += 1
+            ramas_sincronizadas_contador += 1
 
             # Mostrar mensaje de éxito
             msg = f"Archivos copiados exitosamente para la rama {rama}"
@@ -102,20 +102,20 @@ def copiar(
 
     # Mensaje final
     if guardar:
-        if ramas_copiadas_contador > 0:
-            msg = f"Finaliza la copia. Se copiaron {ramas_copiadas_contador} ramas."
+        if ramas_sincronizadas_contador > 0:
+            msg = f"Finaliza la sincronización. Se sincronizaron {ramas_sincronizadas_contador} ramas."
             bitacora.info(msg)
             console.print(f"[green]{msg}[/green]")
         else:
-            msg = "Finaliza la copia. No se ha copiado ninguna rama."
+            msg = "Finaliza la sincronización. No se ha sincronizando ninguna rama."
             bitacora.warning(msg)
             console.print(f"[yellow]{msg}[/yellow]")
     else:
-        if ramas_copiadas_contador > 0:
-            msg = f"Simulación finalizada. Se pueden copiar {ramas_copiadas_contador} ramas."
+        if ramas_sincronizadas_contador > 0:
+            msg = f"Simulación finalizada. Se pueden sincronizar {ramas_sincronizadas_contador} ramas."
             bitacora.info(msg)
             console.print(f"[green]{msg}[/green]")
         else:
-            msg = "Simulación finalizada. No se puede copiar ninguna rama."
+            msg = "Simulación finalizada. No se puede sincronizar ninguna rama."
             bitacora.warning(msg)
             console.print(f"[yellow]{msg}[/yellow]")
