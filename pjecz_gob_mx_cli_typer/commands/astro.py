@@ -36,8 +36,10 @@ def parse_metadata(contenido: str) -> tuple[dict[str, str], str]:
         if ":" in line:
             key, value = line.split(":", 1)
             key = key.strip()
+            value = value.strip().replace(":", " ")  # Cambiar dos puntos por espacio
+            value = re.sub(r" {2,}", " ", value)  # Cambiar dos o mas espacios por uno
             if key in METADATA_KEYS:
-                metadata[key] = value.strip()
+                metadata[key] = value
             else:
                 break
         else:
